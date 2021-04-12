@@ -1,6 +1,6 @@
 import React from "react";
 import styled, {createGlobalStyle, css} from 'styled-components';
-import {myTheme} from "./my-theme";
+import {myTheme} from "../my-theme";
 
 interface LBProps {
     isRest: boolean

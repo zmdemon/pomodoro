@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import logo from './logo.svg';
 import './App.css';
-import Technical from "./Technical";
-import LaunchButtons from "./LaunchButtons";
-import Time from "./Time"
-import Stats from "./Stats";
-import TaskForm from "./TaskForm";
+import Technical from "./partials/Technical";
+import LaunchButtons from "./partials/LaunchButtons";
+import Time from "./partials/Time"
+import Stats from "./partials/Stats";
+import TaskForm from "./partials/TaskForm";
 
 function App() {
     const [time, setTime] = useState(1);
