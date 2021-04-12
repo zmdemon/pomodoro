@@ -1,19 +1,26 @@
 import React, {useEffect, useState} from 'react';
 import logo from './logo.svg';
 import './App.css';
-import Technical from "./partials/Technical";
-import LaunchButtons from "./partials/LaunchButtons";
-import Time from "./partials/Time"
-import Stats from "./partials/Stats";
-import TaskForm from "./partials/TaskForm";
+import Technical from "./components/Technical";
+import LaunchButtons from "./components/LaunchButtons";
+import Time from "./components/Time"
+import Stats from "./components/Stats";
+import TaskForm from "./components/TaskForm";
+// @ts-ignore
+import uuid from "react-uuid";
+import TaskListDrop from "./components/TaskListDrop";
+
+type taskType = { "taskName": string, "id": string, "quantity": number, "total_duration": number }
+export type {taskType}
 
 function App() {
-    const [time, setTime] = useState(1);
+    const [time, setTime] = useState(1)
     const [defTime, setDefTime] = useState(25 * 60)
     const [restTime, setRestTime] = useState(300)
     const [launchMessage, setLaunchMessage] = useState("Запустить Pomodoro")
     const [sessions, setSessions] = useState<{ "interval": number, "desc": string }[]>([])
-    const [tasks, setTasks] = useState<{ "description": string }[]>([])
+    const [tasks, setTasks] = useState<taskType[]>([])
+    const [currentTaskId, setCurrentTaskId] = useState("")
     const [start, setStart] = useState(false)
     const [isRest, setIsRest] = useState(false)
     const [taskFormVisible, setTaskFormVisible] = useState(false)
@@ -42,7 +49,7 @@ function App() {
             let timerId = setTimeout(() => {
                 setTime(e => e - 1);
                 document.title = isRest ? `Чилим!) ${finalTime}` : `Воркаем! ${finalTime}`;
-            }, 1000)
+            }, 10)
             return () => {
                 clearTimeout(timerId)
             }
@@ -51,7 +58,7 @@ function App() {
             setTime(e => restTime)
             setIsRest(e => !e)
             setLaunchMessage(messages[3])
-            addInterval() // adds working interval, if it wasn't a rest
+            addInterval(currentTaskId) // adds working interval, if it wasn't a rest
         } else if (!start) {
             if (isRest) {
                 document.title = `Решаем... `;
@@ -68,8 +75,14 @@ function App() {
         const buttons = LaunchButtons
     }, [start])
 
-    function addInterval() {
+    function addInterval(id: string) {
         if (!isRest) {
+            setTasks(tasks.map(task => {
+                if (task.id === id) {
+                    return {...task, total_duration: task.total_duration += defTime, quantity: task.quantity += 1}
+                }
+                return task
+            }))
             setSessions([...sessions, {"interval": defTime, "desc": "Important work"}])
         }
     }
@@ -97,12 +110,13 @@ function App() {
     function handleTaskFormSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
         setTaskFormVisible(a => !a)
-        setTasks([...tasks, {description: taskName}])
+        let id = uuid().toString()
+        setTasks([...tasks, {taskName: taskName, id: id, total_duration: 0, quantity: 0}])
         setTaskName("")
+        setCurrentTaskId(id)
     }
 
     function handleTaskFormClose() {
-
         setTaskFormVisible(a => !a)
     }
 
@@ -113,6 +127,14 @@ function App() {
     function handleNameChange(e: React.FormEvent<HTMLInputElement>) {
         setTaskName(e.currentTarget.value);
     }
+
+    useEffect(() => console.log(currentTaskId), [currentTaskId])
+
+    function handleCurrentTaskChange(e: React.ChangeEvent<HTMLSelectElement>) {
+        setCurrentTaskId(e.currentTarget.value);
+
+    }
+
 
     function prettyTime(string: string) {
         return (new Array(3).join("0") + string).slice(-2);
@@ -134,6 +156,8 @@ function App() {
                 onFormClose={handleTaskFormClose}
             />
 
+            <TaskListDrop tasks={tasks} onCurrentTaskChange={handleCurrentTaskChange} currentTaskId={currentTaskId}/>
+
             <LaunchButtons
                 onSkipClick={handleSkipClick}
                 onLongRestClick={handleLongRestClick}
@@ -142,11 +166,11 @@ function App() {
                 start={start}
                 signature={launchMessage}
             />
-            <Technical isRest={isRest} start={start} show={true} tasks={tasks}/>
-            <Stats sessions={sessions} list={list}/>
+            <Technical isRest={isRest} start={start} show={true}/>
+            <Stats sessions={sessions} list={list} tasks={tasks}/>
 
         </div>
     );
-}
+};
 
 export default App;

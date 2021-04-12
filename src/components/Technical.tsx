@@ -4,14 +4,15 @@ interface TechProps {
     isRest: boolean
     start: boolean
     show?:boolean
-    tasks: { "description": string }[]
+    children?: JSX.Element
+    tasks?: { "description": string }[]
 }
 
 function Technical(Props: TechProps) {
     if (!Props.show) {
         return null
     }
-    const allTasks = Props.tasks.map((task,index) => <li>{index} {task.description}</li>)
+    const allTasks = Props.tasks?.map((task,index) => <li>{index} {task.description}</li>)
     return (
         <div className="technical-div">
             <h2>Some logs...</h2>
@@ -22,6 +23,7 @@ function Technical(Props: TechProps) {
                     {allTasks}
                 </ul>
             </ul>
+            {Props.children}
         </div>
     )
 }

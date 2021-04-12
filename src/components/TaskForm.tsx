@@ -51,7 +51,7 @@ const Div = styled.div`
 `;
 
 const DivRow = styled(Div)`
-  flex-direction: row; 
+  flex-direction: row;
   align-items: center;
 `;
 
@@ -75,21 +75,14 @@ function TaskForm(props: TaskFormProps) {
     return (
         <>
             {!props.taskFormVisible && <Button onClick={props.onNewTaskAdd}>Добавить новую задачу</Button>}
-            {props.taskFormVisible && (<form action="" onSubmit={props.onTaskSubmit}>
-                <TaskWrapper className={"task-wrapper"}>
-                    <Div>
-                        <Cross onClick={props.onFormClose}>	&#x2715; </Cross>
-                        <DivRow >
-                            <TaskInput autoFocus={true} type="text" onChange={props.onNameChange} value={props.taskName}/>
-                            <Input type="submit" name={"web"}>+</ Input>
-                        </DivRow>
-
-
-                    </Div>
-
-                </TaskWrapper>
-
-            </form>)}
+            {props.taskFormVisible && (
+                <form action="" onSubmit={props.onTaskSubmit}>
+                    <div>
+                        <input type="text" onChange={props.onNameChange} value={props.taskName}/>
+                        <input type="submit" name={"web"} value={"+"}/>
+                    </div>
+                </form>
+            )}
         </>)
 }
 
