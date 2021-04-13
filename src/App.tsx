@@ -11,14 +11,21 @@ import uuid from "react-uuid";
 import TaskListDrop from "./components/TaskListDrop";
 
 type taskType = { "taskName": string, "id": string, "quantity": number, "total_duration": number }
-export type {taskType}
+type timeConstantsType = { "shortRestTime": number, "longRestTime": number, "workingSessionTime": number }
+
+
+export type {taskType,timeConstantsType}
 
 function App() {
     const [time, setTime] = useState(1)
     const [defTime, setDefTime] = useState(25 * 60)
     const [restTime, setRestTime] = useState(300)
+    const [timeConstants, setTimeConstants] = useState<timeConstantsType>({
+        shortRestTime: 5 * 60,
+        longRestTime: 15 * 60,
+        workingSessionTime: 25 * 60
+    })
     const [launchMessage, setLaunchMessage] = useState("Запустить Pomodoro")
-    const [sessions, setSessions] = useState<{ "interval": number, "desc": string }[]>([])
     const [tasks, setTasks] = useState<taskType[]>([])
     const [currentTaskId, setCurrentTaskId] = useState("")
     const [start, setStart] = useState(false)
@@ -36,12 +43,6 @@ function App() {
         "Начать длинный перерыв"
     ]
 
-    const list = sessions.map((session, index) => {
-        return (
-            <li key={index}>{index + 1}. Инвестированное время: {session.interval / 60} мин</li>
-        )
-    })
-
 
     useEffect(() => {
         if (start && time > 0) {
@@ -55,7 +56,7 @@ function App() {
             }
         } else if (time === 0) {
             setStart(e => false)
-            setTime(e => restTime)
+            setTime(e => timeConstants.shortRestTime)
             setIsRest(e => !e)
             setLaunchMessage(messages[3])
             addInterval(currentTaskId) // adds working interval, if it wasn't a rest
@@ -83,7 +84,7 @@ function App() {
                 }
                 return task
             }))
-            setSessions([...sessions, {"interval": defTime, "desc": "Important work"}])
+
         }
     }
 
@@ -141,7 +142,7 @@ function App() {
     }
 
     let finalTime = prettyTime(Math.floor(time / 60).toString()) + ':' + prettyTime((time % 60).toString());
-
+    let currentTask = tasks.filter(task => task.id === currentTaskId)[0]
 
     return (
         <div className="App">
@@ -154,9 +155,12 @@ function App() {
                 onNameChange={handleNameChange}
                 taskName={taskName}
                 onFormClose={handleTaskFormClose}
+                taskDropdownList={<TaskListDrop tasks={tasks} onCurrentTaskChange={handleCurrentTaskChange}
+                                                currentTaskId={currentTaskId}/>}
+                currentTaskName={currentTask?.taskName}
+                currentTask={currentTask}
             />
 
-            <TaskListDrop tasks={tasks} onCurrentTaskChange={handleCurrentTaskChange} currentTaskId={currentTaskId}/>
 
             <LaunchButtons
                 onSkipClick={handleSkipClick}
@@ -166,8 +170,14 @@ function App() {
                 start={start}
                 signature={launchMessage}
             />
-            <Technical isRest={isRest} start={start} show={true}/>
-            <Stats sessions={sessions} list={list} tasks={tasks}/>
+            <Technical isRest={isRest} start={start} show={true} children={
+                <>
+                    Current task is: {currentTaskId}
+                    <Stats tasks={tasks}/>
+                </>
+
+            }/>
+
 
         </div>
     );

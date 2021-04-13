@@ -14,7 +14,7 @@ function Task(Props: TaskProps) {
 
     return (
         <div>
-            <h3>{task.taskName}</h3>
+            <h4>{task.taskName}</h4>
             <ul>
                 <li>кол-во {task.quantity}</li>
                 <li>время {task.total_duration}</li>
