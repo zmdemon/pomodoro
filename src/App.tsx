@@ -9,17 +9,17 @@ import TaskForm from "./components/TaskForm";
 // @ts-ignore
 import uuid from "react-uuid";
 import TaskListDrop from "./components/TaskListDrop";
+import TimeSettings from "./components/TimeSettings";
 
 type taskType = { "taskName": string, "id": string, "quantity": number, "total_duration": number }
 type timeConstantsType = { "shortRestTime": number, "longRestTime": number, "workingSessionTime": number }
+type timeConstNameType = "shortRestTime" | "longRestTime" | "workingSessionTime"
 
-
-export type {taskType,timeConstantsType}
+export type {taskType, timeConstantsType, timeConstNameType}
 
 function App() {
-    const [time, setTime] = useState(1)
-    const [defTime, setDefTime] = useState(25 * 60)
-    const [restTime, setRestTime] = useState(300)
+    const [time, setTime] = useState<number>(1)
+
     const [timeConstants, setTimeConstants] = useState<timeConstantsType>({
         shortRestTime: 5 * 60,
         longRestTime: 15 * 60,
@@ -50,7 +50,7 @@ function App() {
             let timerId = setTimeout(() => {
                 setTime(e => e - 1);
                 document.title = isRest ? `Чилим!) ${finalTime}` : `Воркаем! ${finalTime}`;
-            }, 10)
+            }, 1000)
             return () => {
                 clearTimeout(timerId)
             }
@@ -65,22 +65,40 @@ function App() {
                 document.title = `Решаем... `;
             } else {
                 document.title = `Готовимся... ${finalTime}`;
-                setTime(e => defTime)
                 setLaunchMessage(messages[1])
             }
         }
     })
+
+    useEffect(() => {
+        if (!start) {
+            setTime(e => timeConstants.workingSessionTime)
+        }
+    }, [start, timeConstants])
 
 
     useEffect(() => {
         const buttons = LaunchButtons
     }, [start])
 
+    useEffect(() => {
+        if (isRest) {
+            setTime(e => timeConstants.shortRestTime)
+        } else if (!isRest) {
+            setTime(e => timeConstants.workingSessionTime)
+        }
+
+    }, [timeConstants, isRest])
+
     function addInterval(id: string) {
         if (!isRest) {
             setTasks(tasks.map(task => {
                 if (task.id === id) {
-                    return {...task, total_duration: task.total_duration += defTime, quantity: task.quantity += 1}
+                    return {
+                        ...task,
+                        total_duration: task.total_duration -= -timeConstants.workingSessionTime,
+                        quantity: task.quantity += 1
+                    }
                 }
                 return task
             }))
@@ -93,8 +111,13 @@ function App() {
         console.log("cancel!")
     }
 
+    function handleRestClick(typeName: timeConstNameType) {
+        setTime(e => timeConstants[typeName])
+        setStart(e => !e)
+    }
+
     function handleLongRestClick() {
-        setTime(e => 15 * 60)
+        setTime(e => timeConstants.longRestTime)
         setStart(e => !e)
     }
 
@@ -104,8 +127,13 @@ function App() {
         console.log("skip")
     }
 
+
     function handleDefTimeClick(plus: boolean) {
-        plus ? setDefTime(it => it + 60) : setDefTime(it => it - 60)
+        plus ? setTime(time - (-60)) : setTime(time - 60)
+    }
+
+    function handleTimeConstChange(timeConstType: timeConstNameType, e: React.ChangeEvent<HTMLSelectElement>) {
+        setTimeConstants({...timeConstants, [timeConstType]: e.target.value})
     }
 
     function handleTaskFormSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -129,13 +157,9 @@ function App() {
         setTaskName(e.currentTarget.value);
     }
 
-    useEffect(() => console.log(currentTaskId), [currentTaskId])
-
     function handleCurrentTaskChange(e: React.ChangeEvent<HTMLSelectElement>) {
         setCurrentTaskId(e.currentTarget.value);
-
     }
-
 
     function prettyTime(string: string) {
         return (new Array(3).join("0") + string).slice(-2);
@@ -146,7 +170,7 @@ function App() {
 
     return (
         <div className="App">
-            <Time isRest={isRest} time={time} defTime={defTime} start={start} onDefTimeClick={handleDefTimeClick}/>
+            <Time isRest={isRest} time={time} start={start} onDefTimeClick={handleDefTimeClick}/>
 
             <TaskForm
                 onTaskSubmit={handleTaskFormSubmit}
@@ -165,15 +189,17 @@ function App() {
             <LaunchButtons
                 onSkipClick={handleSkipClick}
                 onLongRestClick={handleLongRestClick}
+                onRestClick={handleRestClick}
                 onStartClick={handleStartClick}
                 isRest={isRest}
                 start={start}
                 signature={launchMessage}
             />
-            <Technical isRest={isRest} start={start} show={true} children={
+            <Technical isRest={isRest} start={start} show={true} time={time} children={
                 <>
                     Current task is: {currentTaskId}
                     <Stats tasks={tasks}/>
+                    <TimeSettings timeConstants={timeConstants} onTimeConstChange={handleTimeConstChange}/>
                 </>
 
             }/>
@@ -181,6 +207,6 @@ function App() {
 
         </div>
     );
-};
+}
 
 export default App;

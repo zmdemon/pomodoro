@@ -1,12 +1,14 @@
 import React from "react";
 import styled, {createGlobalStyle, css} from 'styled-components';
 import {myTheme} from "../my-theme";
+import {timeConstNameType} from "../App";
 
 interface LBProps {
     isRest: boolean
     start: boolean
     onSkipClick: (event: React.MouseEvent<HTMLButtonElement>) => void
     onLongRestClick: (event: React.MouseEvent<HTMLButtonElement>) => void
+    onRestClick: (typeName: timeConstNameType, event: React.MouseEvent<HTMLButtonElement>) => void
     onStartClick: (event: React.MouseEvent<HTMLButtonElement>) => void
     signature: string
 }
@@ -41,11 +43,13 @@ function LaunchButtons(Props: LBProps) {
     const onLongRestClick = Props.onLongRestClick
     const onStartClick = Props.onStartClick
     const signature = Props.signature
+    const onRestClick = Props.onRestClick
 
     return (
         <div className="launch-buttons">
-            {(!isRest || !start) && <StartButton onClick={onStartClick}>{signature}</StartButton>}
-            {!start && isRest && <Button onClick={onLongRestClick}>{Messages.longRest}</Button>}
+            {(!isRest ) && <StartButton onClick={onStartClick}>{signature}</StartButton>}
+            {!start && isRest && <Button onClick={e => onRestClick("shortRestTime", e)}>{Messages.shortRest}</Button>}
+            {!start && isRest && <Button onClick={e => onRestClick("longRestTime", e)}>{Messages.longRest}</Button>}
             {isRest && <Button onClick={Props.onSkipClick}>{Messages.skip}</Button>}
         </div>
     )

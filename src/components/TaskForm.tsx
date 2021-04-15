@@ -77,27 +77,37 @@ interface TaskFormProps {
 //     `;
 // }
 
+    const Div = styled.div`
+      box-sizing: border-box;
+      border: #282c34 solid 3px;
+      width: min-content;
+      margin: 50px auto;
+      padding: 15px;
+    `;
 
 function TaskForm(props: TaskFormProps) {
 
     return (
         <>
             {!props.taskFormVisible &&
-            <Button onClick={props.onNewTaskAdd}>{(props.currentTaskName) ? props.currentTaskName : "Выбрать"}
+            <Button onClick={props.onNewTaskAdd}>{(props.currentTaskName) ? props.currentTaskName : "Выбрать задачу"}
                 <br/> {(props.currentTask)? "Сделано: "+props.currentTask.quantity:null}</Button>}
             {props.taskFormVisible && (
-                <form action="" onSubmit={props.onTaskSubmit}>
-                    <input type="text" onChange={props.onNameChange} value={props.taskName}/>
-                    <div>
+                <Div>
+                    <form action="" onSubmit={props.onTaskSubmit}>
+                        <h4><label htmlFor={'taskAdd'}>Добавить задачу:</label></h4>
 
+                        <input type="text" name={'taskAdd'} onChange={props.onNameChange} value={props.taskName}/>
+                        <div>
+                            <input type="submit" name={"web"} value={"добавить"}/>
+                            <button onClick={props.onFormClose}>закрыть</button>
+                        </div>
 
-                        <input type="submit" name={"web"} value={"добавить"}/>
-                        <button onClick={props.onFormClose}>закрыть</button>
+                        <h4><label htmlFor={'taskChoose'}>Выбрать задачу:</label></h4>
+                        {props.taskDropdownList}
+                    </form>
+                </Div>
 
-                    </div>
-                    <h4>Выбрать задачу:</h4>
-                    {props.taskDropdownList}
-                </form>
             )}
         </>)
 }
