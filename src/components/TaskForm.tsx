@@ -97,7 +97,8 @@ function TaskForm(props: TaskFormProps) {
                     <form action="" onSubmit={props.onTaskSubmit}>
                         <h4><label htmlFor={'taskAdd'}>Добавить задачу:</label></h4>
 
-                        <input type="text" name={'taskAdd'} onChange={props.onNameChange} value={props.taskName}/>
+                        <input type="text" name={'taskAdd'} onChange={props.onNameChange} value={props.taskName} placeholder={"Что делать?"}/>
+                        <input type="number" placeholder={"Сколько делать?"}/>
                         <div>
                             <input type="submit" name={"web"} value={"добавить"}/>
                             <button onClick={props.onFormClose}>закрыть</button>

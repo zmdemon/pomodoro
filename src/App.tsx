@@ -32,6 +32,7 @@ function App() {
     const [isRest, setIsRest] = useState(false)
     const [taskFormVisible, setTaskFormVisible] = useState(false)
     const [taskName, setTaskName] = useState("")
+    const [timeSpeed, setTimeSpeed] = useState(1000)
 
     //const[info,setInfo] = useState<{ "isRest": boolean, "start": boolean }>({"isRest": false, "start": false })
 
@@ -50,7 +51,7 @@ function App() {
             let timerId = setTimeout(() => {
                 setTime(e => e - 1);
                 document.title = isRest ? `Чилим!) ${finalTime}` : `Воркаем! ${finalTime}`;
-            }, 1000)
+            }, timeSpeed)
             return () => {
                 clearTimeout(timerId)
             }
@@ -136,6 +137,10 @@ function App() {
         setTimeConstants({...timeConstants, [timeConstType]: e.target.value})
     }
 
+    function handleTimeSpeedChangeChange() {
+        (timeSpeed < 1000) ? setTimeSpeed(e => e * 10) : setTimeSpeed(10)
+    }
+
     function handleTaskFormSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
         setTaskFormVisible(a => !a)
@@ -200,6 +205,7 @@ function App() {
                     Current task is: {currentTaskId}
                     <Stats tasks={tasks}/>
                     <TimeSettings timeConstants={timeConstants} onTimeConstChange={handleTimeConstChange}/>
+                    <button onClick={handleTimeSpeedChangeChange}>boost) {timeSpeed}</button>
                 </>
 
             }/>
