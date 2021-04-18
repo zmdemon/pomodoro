@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import logo from './logo.svg';
 import './App.css';
 import Technical from "./components/Technical";
 import LaunchButtons from "./components/LaunchButtons";
@@ -8,10 +7,11 @@ import Stats from "./components/Stats";
 import TaskForm from "./components/TaskForm";
 // @ts-ignore
 import uuid from "react-uuid";
-import TaskListDrop from "./components/TaskListDrop";
+import TasksDropSelect from "./components/TasksDropSelect";
 import TimeSettings from "./components/TimeSettings";
+import TasksList from "./components/TasksList";
 
-type taskType = { "taskName": string, "id": string, "quantity": number, "total_duration": number }
+type taskType = { "taskName": string, "id": string, "quantity": number, "total_duration": number, "estimated": number, "isDone": boolean }
 type timeConstantsType = { "shortRestTime": number, "longRestTime": number, "workingSessionTime": number }
 type timeConstNameType = "shortRestTime" | "longRestTime" | "workingSessionTime"
 
@@ -26,15 +26,21 @@ function App() {
         workingSessionTime: 25 * 60
     })
     const [launchMessage, setLaunchMessage] = useState("Запустить Pomodoro")
-    const [tasks, setTasks] = useState<taskType[]>([])
+    //const [tasks, setTasks] = useState<taskType[]>([])
+    const [tasks, setTasks] = useState<taskType[]>(() => {
+        const all: taskType[] = JSON.parse(localStorage.getItem("items") as string);
+        if (!all) {
+            return [];
+        } else return all;
+    });
     const [currentTaskId, setCurrentTaskId] = useState("")
     const [start, setStart] = useState(false)
     const [isRest, setIsRest] = useState(false)
     const [taskFormVisible, setTaskFormVisible] = useState(false)
     const [taskName, setTaskName] = useState("")
+    const [estQuantity, setEstQuantity] = useState(4)
     const [timeSpeed, setTimeSpeed] = useState(1000)
 
-    //const[info,setInfo] = useState<{ "isRest": boolean, "start": boolean }>({"isRest": false, "start": false })
 
     const messages: Array<string> = [
         "Отменить Pomodoro",
@@ -56,8 +62,8 @@ function App() {
                 clearTimeout(timerId)
             }
         } else if (time === 0) {
-            setStart(e => false)
-            setTime(e => timeConstants.shortRestTime)
+            setStart(_ => false)
+            setTime(_ => timeConstants.shortRestTime)
             setIsRest(e => !e)
             setLaunchMessage(messages[3])
             addInterval(currentTaskId) // adds working interval, if it wasn't a rest
@@ -73,20 +79,29 @@ function App() {
 
     useEffect(() => {
         if (!start) {
-            setTime(e => timeConstants.workingSessionTime)
+            setTime(_ => timeConstants.workingSessionTime)
         }
     }, [start, timeConstants])
 
-
     useEffect(() => {
-        const buttons = LaunchButtons
-    }, [start])
+        localStorage.setItem("items", JSON.stringify(tasks));
+    }, [tasks]);
+
+    // useEffect(() => {
+    //     if (start && time > 0) {
+    //         setLaunchMessage(isRest ? messages[2] : messages[0])
+    //     }
+    // }, [isRest,start])
+
+    // useEffect(() => {
+    //     const buttons = LaunchButtons
+    // }, [start])
 
     useEffect(() => {
         if (isRest) {
-            setTime(e => timeConstants.shortRestTime)
+            setTime(_ => timeConstants.shortRestTime)
         } else if (!isRest) {
-            setTime(e => timeConstants.workingSessionTime)
+            setTime(_ => timeConstants.workingSessionTime)
         }
 
     }, [timeConstants, isRest])
@@ -113,18 +128,18 @@ function App() {
     }
 
     function handleRestClick(typeName: timeConstNameType) {
-        setTime(e => timeConstants[typeName])
+        setTime(_ => timeConstants[typeName])
         setStart(e => !e)
     }
 
     function handleLongRestClick() {
-        setTime(e => timeConstants.longRestTime)
+        setTime(_ => timeConstants.longRestTime)
         setStart(e => !e)
     }
 
     function handleSkipClick() {
-        setStart(e => false)
-        setIsRest(e => false)
+        setStart(_ => false)
+        setIsRest(_ => false)
         console.log("skip")
     }
 
@@ -145,9 +160,30 @@ function App() {
         e.preventDefault()
         setTaskFormVisible(a => !a)
         let id = uuid().toString()
-        setTasks([...tasks, {taskName: taskName, id: id, total_duration: 0, quantity: 0}])
+        setTasks([...tasks, {
+            taskName: taskName,
+            estimated: estQuantity,
+            quantity: 0,
+            id: id,
+            total_duration: 0,
+            isDone: false
+        }])
         setTaskName("")
+        setEstQuantity(4)
         setCurrentTaskId(id)
+    }
+
+    function handleTaskDeleteClick(id: string) {
+        setTasks(tasks.filter((task) => task.id !== id));
+    }
+
+    function handleTaskDoneChange(id: string) {
+        setTasks(tasks.map(task => {
+            if (task.id === id) {
+                return {...task, isDone: !task.isDone}
+            }
+            return task
+        }))
     }
 
     function handleTaskFormClose() {
@@ -160,6 +196,10 @@ function App() {
 
     function handleNameChange(e: React.FormEvent<HTMLInputElement>) {
         setTaskName(e.currentTarget.value);
+    }
+
+    function handleQuantityChange(e: React.FormEvent<HTMLInputElement>) {
+        setEstQuantity(parseInt(e.currentTarget.value, 10));
     }
 
     function handleCurrentTaskChange(e: React.ChangeEvent<HTMLSelectElement>) {
@@ -182,10 +222,12 @@ function App() {
                 taskFormVisible={taskFormVisible}
                 onNewTaskAdd={handleNewTaskAdd}
                 onNameChange={handleNameChange}
+                onQuantityChange={handleQuantityChange}
+                quantity={estQuantity}
                 taskName={taskName}
                 onFormClose={handleTaskFormClose}
-                taskDropdownList={<TaskListDrop tasks={tasks} onCurrentTaskChange={handleCurrentTaskChange}
-                                                currentTaskId={currentTaskId}/>}
+                taskDropdownList={<TasksDropSelect tasks={tasks} onCurrentTaskChange={handleCurrentTaskChange}
+                                                   currentTaskId={currentTaskId}/>}
                 currentTaskName={currentTask?.taskName}
                 currentTask={currentTask}
             />
@@ -202,8 +244,10 @@ function App() {
             />
             <Technical isRest={isRest} start={start} show={true} time={time} children={
                 <>
-                    Current task is: {currentTaskId}
-                    <Stats tasks={tasks}/>
+                    {currentTaskId && "Current task is:" + currentTaskId}
+                    <Stats tasks={tasks}
+                           tasksList={<TasksList tasks={tasks} onTaskDeleteClick={handleTaskDeleteClick}
+                                                 onTaskDoneChange={handleTaskDoneChange}/>}/>
                     <TimeSettings timeConstants={timeConstants} onTimeConstChange={handleTimeConstChange}/>
                     <button onClick={handleTimeSpeedChangeChange}>boost) {timeSpeed}</button>
                 </>

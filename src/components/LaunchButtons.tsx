@@ -40,7 +40,6 @@ export const StartButton = styled(Button)`
 function LaunchButtons(Props: LBProps) {
     const isRest = Props.isRest
     const start = Props.start
-    const onLongRestClick = Props.onLongRestClick
     const onStartClick = Props.onStartClick
     const signature = Props.signature
     const onRestClick = Props.onRestClick

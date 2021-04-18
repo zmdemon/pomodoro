@@ -9,7 +9,7 @@ interface TaskListProps {
 
 }
 
-export default function TaskListDrop(Props: TaskListProps) {
+export default function TasksDropSelect(Props: TaskListProps) {
 
     const allTasks = Props.tasks.map((task) => <option key={task.id} value={task.id}>{task.taskName}</option>)
     return (

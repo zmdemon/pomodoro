@@ -18,13 +18,14 @@ function Technical(Props: TechProps) {
     return (
         <div className="technical-div">
             <h2>Some logs...</h2>
-            <ul>
+            {false&&<ul>
                 <li>isRest={Props.isRest && "tru"}</li>
                 <li>start={Props.start && "tru"}</li>
-                <li>time: {Props.time} {Props.time/60}</li>
-                <ul>
-                    {allTasks}
-                </ul>
+                <li>time: {Props.time} {Props.time / 60}</li>
+
+            </ul>}
+            <ul>
+                {allTasks}
             </ul>
             {Props.children}
         </div>

@@ -7,9 +7,11 @@ interface TaskFormProps {
     onTaskSubmit: (event: React.FormEvent<HTMLFormElement>) => void
     onNewTaskAdd: (event: React.MouseEvent<HTMLButtonElement>) => void
     onNameChange: (event: React.FormEvent<HTMLInputElement>) => void
+    onQuantityChange: (event: React.FormEvent<HTMLInputElement>) => void
     onFormClose: (event: React.MouseEvent<HTMLButtonElement>) => void
     taskDropdownList: JSX.Element
     taskName: string
+    quantity: number
     currentTaskName: string
     taskFormVisible: boolean
     currentTask: taskType
@@ -98,7 +100,7 @@ function TaskForm(props: TaskFormProps) {
                         <h4><label htmlFor={'taskAdd'}>Добавить задачу:</label></h4>
 
                         <input type="text" name={'taskAdd'} onChange={props.onNameChange} value={props.taskName} placeholder={"Что делать?"}/>
-                        <input type="number" placeholder={"Сколько делать?"}/>
+                        <input type="number" onChange={props.onQuantityChange} value={props.quantity} placeholder={"Сколько делать?"}/>
                         <div>
                             <input type="submit" name={"web"} value={"добавить"}/>
                             <button onClick={props.onFormClose}>закрыть</button>

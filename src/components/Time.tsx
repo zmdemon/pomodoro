@@ -30,11 +30,14 @@ function Time(Props: LBProps) {
         <>
             <h1>{finalTime}</h1>
             <div className="edit-time-div">
-                <PlusButton onClick={(e) => onDefTimeClick(true, e)}
-                            disabled={start || time >= 59 * 60 || isRest}>+
-                </PlusButton>
-                <PlusButton onClick={(e) => onDefTimeClick(false, e)} disabled={start || time <= 60 || isRest}>-
-                </PlusButton>
+                {(!isRest&&!start)&&<div>
+                    <PlusButton onClick={(e) => onDefTimeClick(true, e)}
+                                disabled={start || time >= 59 * 60 || isRest}>+
+                    </PlusButton>
+                    <PlusButton onClick={(e) => onDefTimeClick(false, e)} disabled={start || time <= 60 || isRest}>-
+                    </PlusButton>
+                </div>}
+
             </div>
         </>
     )

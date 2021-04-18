@@ -1,6 +1,4 @@
 import React from "react";
-import {Button} from "./LaunchButtons";
-import styled from "styled-components";
 import {timeConstantsType, timeConstNameType} from "../App";
 
 interface TimeSettingsProps {
