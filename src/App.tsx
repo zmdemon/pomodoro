@@ -175,6 +175,19 @@ function App() {
 
     function handleTaskDeleteClick(id: string) {
         setTasks(tasks.filter((task) => task.id !== id));
+        if (currentTaskId===id) {
+            setCurrentTaskId("")
+        }
+    }
+
+    function handleTaskFormClose() {
+        setTaskFormVisible(a => !a)
+        if (currentTaskId==="") {
+            setCurrentTaskId(tasks[0].id)
+        }
+    }
+    function handleTaskDivClick(id: string) {
+        setCurrentTaskId(id)
     }
 
     function handleTaskDoneChange(id: string) {
@@ -186,9 +199,6 @@ function App() {
         }))
     }
 
-    function handleTaskFormClose() {
-        setTaskFormVisible(a => !a)
-    }
 
     function handleNewTaskAdd() {
         setTaskFormVisible(a => !a)
@@ -244,7 +254,7 @@ function App() {
             />
             <Technical isRest={isRest} start={start} show={true} time={time} children={
                 <>
-                    {currentTaskId && "Current task is:" + currentTaskId}
+                    {/*{currentTaskId && "Current task is:" + currentTaskId}*/}
                     <Stats tasks={tasks}
                            tasksList={<TasksList tasks={tasks} onTaskDeleteClick={handleTaskDeleteClick}
                                                  onTaskDoneChange={handleTaskDoneChange}/>}/>

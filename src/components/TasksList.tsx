@@ -6,6 +6,7 @@ interface TaskListProps {
     tasks: taskType[]
     onTaskDeleteClick: (arg0: string, arg1: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
     onTaskDoneChange: (arg0: string, arg1: React.ChangeEvent<HTMLInputElement>) => void
+    // onTaskDivClick: (arg0: string, arg1: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
 }
 
 
@@ -16,17 +17,16 @@ export default function TasksList(Props: TaskListProps) {
                 onChange={(e) => Props.onTaskDoneChange(task.id, e)}
                 checked={task.isDone}
             />
+            const deleteButton = <button
+                className="btn-delete"
+                onClick={(e) => Props.onTaskDeleteClick(task.id, e)}
+            >
+                Удалить
+            </button>
 
             return (
                 <li key={task.id}>
-                    <Task id={task.id} key={task.id} tasks={Props.tasks} checkBox={checkbox}/>
-                    <button
-                        className="btn-delete"
-                        onClick={(e) => Props.onTaskDeleteClick(task.id, e)}
-                    >
-                        Удалить
-                    </button>
-
+                    <Task id={task.id} key={task.id} tasks={Props.tasks} checkBox={checkbox} children={deleteButton}/>
                 </li>
             )
         }
