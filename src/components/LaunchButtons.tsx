@@ -34,7 +34,7 @@ export const Button = styled.button`
 `;
 
 export const StartButton = styled(Button)`
-  background-color: rgba(108, 197, 81);
+  background-color: rgba(108, 197, 81,0.8);
 `;
 
 function LaunchButtons(Props: LBProps) {

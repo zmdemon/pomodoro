@@ -6,7 +6,6 @@ interface TaskListProps {
     tasks: taskType[]
     onTaskDeleteClick: (arg0: string, arg1: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
     onTaskDoneChange: (arg0: string, arg1: React.ChangeEvent<HTMLInputElement>) => void
-    // onTaskDivClick: (arg0: string, arg1: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
 }
 
 

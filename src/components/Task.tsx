@@ -23,9 +23,14 @@ function Task(Props: TaskProps) {
     `;
     const TaskDiv = styled.div`
 
+      padding: 20px;
+
+      h4 {
+        margin-top: 0;
+      }
+
       &:hover {
         backdrop-filter: saturate(80%);
-
         background-color: rgba(92, 92, 92, 0.05); // <Thing> when hovered
       }
     `;

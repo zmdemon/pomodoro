@@ -43,18 +43,21 @@ function TimeSettings(Props: TimeSettingsProps) {
     return (
         <>
             <h4>Настройки времени</h4>
-            <section>
-                <label htmlFor="workingSessionTime">Рабочее время--</label>
-                {workingTimeSelect}
-            </section>
-            <section>
-                <label htmlFor="shortRestTime">Короткий перерыв--</label>
-                {shortRestTimeSelect}
-            </section>
-            <section>
-                <label htmlFor="longRestTime">Длиннный перерыв--</label>
-                {longRestTimeSelect}
-            </section>
+            <div>
+                <section>
+                    <label htmlFor="workingSessionTime">Рабочее время</label>
+                    {workingTimeSelect}
+                </section>
+                <section>
+                    <label htmlFor="shortRestTime">Короткий перерыв</label>
+                    {shortRestTimeSelect}
+                </section>
+                <section>
+                    <label htmlFor="longRestTime">Длиннный перерыв</label>
+                    {longRestTimeSelect}
+                </section>
+            </div>
+
 
 
         </>
