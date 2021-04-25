@@ -7,20 +7,21 @@ interface TimeSettingsProps {
 
 }
 
+const commonTimeConstants = {
+    workingTimeValues: [
+        1, 15, 20, 25, 30, 45, 50, 55, 60
+    ].map(i => i * 60),
+    shortRestTimeValues: [
+        1, 3, 4, 5, 7
+    ].map(i => i * 60),
+    longRestTimeValues: [
+        1, 5, 10, 15, 20, 25, 30
+    ].map(i => i * 60),
+}
 
 function TimeSettings(Props: TimeSettingsProps) {
 
-    const commonTimeConstants = {
-        workingTimeValues: [
-            1, 15, 20, 25, 30, 45, 50, 55, 60
-        ].map(i => i * 60),
-        shortRestTimeValues: [
-            1, 3, 4, 5, 7
-        ].map(i => i * 60),
-        longRestTimeValues: [
-            1, 5, 10, 15, 20, 25, 30
-        ].map(i => i * 60),
-    }
+
 
 
     const makeOptions = (array: number[]) => {

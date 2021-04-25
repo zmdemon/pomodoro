@@ -19,6 +19,21 @@ type timeConstNameType = "shortRestTime" | "longRestTime" | "workingSessionTime"
 
 export type {taskType, timeConstantsType, timeConstNameType}
 
+const Sets = styled(Button)`
+      border: 1px;
+      border-radius: 5px;
+      background-color: gainsboro;
+      cursor: pointer;
+      color: #282c34;
+
+      &:hover {
+        color: black;
+      }
+    `;
+const ControlsDiv = styled.div`
+      display: flex;
+    `;
+
 function App() {
     const [time, setTime] = useState<number>(1)
 
@@ -28,7 +43,6 @@ function App() {
         workingSessionTime: 25 * 60
     })
     const [launchMessage, setLaunchMessage] = useState("Запустить Pomodoro")
-    //const [tasks, setTasks] = useState<taskType[]>([])
     const [tasks, setTasks] = useState<taskType[]>(() => {
         const all: taskType[] = JSON.parse(localStorage.getItem("items") as string);
         if (!all) {
@@ -41,7 +55,6 @@ function App() {
     const [taskName, setTaskName] = useState("")
     const [estQuantity, setEstQuantity] = useState(4)
     const [timeSpeed, setTimeSpeed] = useState(1000)
-    //visibility
     const [taskFormVisible, setTaskFormVisible] = useState(false)
     const [tabVisible, setTabVisible] = useState(false)
     const [statsVisible, setStatsVisible] = useState(false)
@@ -56,23 +69,38 @@ function App() {
     ]
 
 
-    useEffect(() => {
+    const id = React.useRef(0);
+    const clear = () => {
+        window.clearInterval(id.current);
+    };
+    React.useEffect(() => {
         if (start && time > 0) {
             setLaunchMessage(isRest ? messages[2] : messages[0])
-            let timerId = setTimeout(() => {
-                setTime(e => e - 1);
-                document.title = isRest ? `Чилим!) ${finalTime}` : `Воркаем! ${finalTime}`;
-            }, timeSpeed)
-            return () => {
-                clearTimeout(timerId)
-            }
-        } else if (time === 0) {
+            id.current = window.setInterval(() => {
+                setTime((time) => time - 1);
+            }, 1000);
+        }
+
+        return () => clear();
+    }, [start]);
+
+    React.useEffect(() => {
+        if (time === 0) {
             setStart(_ => false)
             setTime(_ => timeConstants.shortRestTime)
             setIsRest(e => !e)
             setLaunchMessage(messages[3])
-            addInterval(currentTaskId) // adds working interval, if it wasn't a rest
-        } else if (!start) {
+            addInterval(currentTaskId)
+            clear();
+        }
+    }, [time]);
+
+    React.useEffect(() => {
+        document.title = isRest ? `Чилим!)` : `Воркаем! ${finalTime}`;
+    }, [time, isRest]);
+
+    React.useEffect(() => {
+        if (!start) {
             if (isRest) {
                 document.title = `Решаем... `;
             } else {
@@ -80,7 +108,34 @@ function App() {
                 setLaunchMessage(messages[1])
             }
         }
-    })
+    }, [start]);
+
+
+    // useEffect(() => {
+    //     if (start && time > 0) {
+    //         setLaunchMessage(isRest ? messages[2] : messages[0])
+    //         let timerId = setTimeout(() => {
+    //             setTime(e => e - 1);
+    //             document.title = isRest ? `Чилим!) ${finalTime}` : `Воркаем! ${finalTime}`;
+    //         }, timeSpeed)
+    //         return () => {
+    //             clearTimeout(timerId)
+    //         }
+    //     } else if (time === 0) {
+    //         setStart(_ => false)
+    //         setTime(_ => timeConstants.shortRestTime)
+    //         setIsRest(e => !e)
+    //         setLaunchMessage(messages[3])
+    //         addInterval(currentTaskId) // adds working interval, if it wasn't a rest
+    //     } else if (!start) {
+    //         if (isRest) {
+    //             document.title = `Решаем... `;
+    //         } else {
+    //             document.title = `Готовимся... ${finalTime}`;
+    //             setLaunchMessage(messages[1])
+    //         }
+    //     }
+    // })
 
     useEffect(() => {
         if (!start) {
@@ -92,15 +147,7 @@ function App() {
         localStorage.setItem("items", JSON.stringify(tasks));
     }, [tasks]);
 
-    // useEffect(() => {
-    //     if (start && time > 0) {
-    //         setLaunchMessage(isRest ? messages[2] : messages[0])
-    //     }
-    // }, [isRest,start])
 
-    // useEffect(() => {
-    //     const buttons = LaunchButtons
-    // }, [start])
 
     useEffect(() => {
         if (isRest) {
@@ -201,9 +248,9 @@ function App() {
     }
 
 
-    function handleTaskDivClick(id: string) {
-        setCurrentTaskId(id)
-    }
+    // function handleTaskDivClick(id: string) {
+    //     setCurrentTaskId(id)
+    // }
 
     function handleTaskDoneChange(id: string) {
         setTasks(tasks.map(task => {
@@ -238,20 +285,7 @@ function App() {
     let finalTime = prettyTime(Math.floor(time / 60).toString()) + ':' + prettyTime((time % 60).toString());
     let currentTask = tasks.filter(task => task.id === currentTaskId)[0]
 
-    const Sets = styled(Button)`
-      border: 1px;
-      border-radius: 5px;
-      background-color: gainsboro;
-      cursor: pointer;
-      color: #282c34;
 
-      &:hover {
-        color: black;
-      }
-    `;
-    const ControlsDiv = styled.div`
-      display: flex;
-    `;
 
 
     return (
@@ -300,26 +334,24 @@ function App() {
 
             }/>
 
-                {statsVisible &&
-                <Stats tasks={tasks}
-                       tasksList={<TasksList
-                           tasks={tasks}
-                           onTaskDeleteClick={handleTaskDeleteClick}
-                           onTaskDoneChange={handleTaskDoneChange}
-                       />}
-                />}
+            {statsVisible &&
+            <Stats tasks={tasks}
+                   tasksList={<TasksList
+                       tasks={tasks}
+                       onTaskDeleteClick={handleTaskDeleteClick}
+                       onTaskDoneChange={handleTaskDoneChange}
+                   />}
+            />}
 
-                {tabVisible && <MenuWrapper
-                    title={"Настройки"}
-                    onCrossClick={handleTabClose}
-                    children={
-                        <TimeSettings
-                            timeConstants={timeConstants}
-                            onTimeConstChange={handleTimeConstChange}
-                        />}
-                />}
-
-
+            {tabVisible && <MenuWrapper
+                title={"Настройки"}
+                onCrossClick={handleTabClose}
+                children={
+                    <TimeSettings
+                        timeConstants={timeConstants}
+                        onTimeConstChange={handleTimeConstChange}
+                    />}
+            />}
 
 
         </div>

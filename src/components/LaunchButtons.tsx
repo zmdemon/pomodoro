@@ -1,6 +1,5 @@
 import React from "react";
-import styled, {createGlobalStyle, css} from 'styled-components';
-import {myTheme} from "../my-theme";
+import styled from 'styled-components';
 import {timeConstNameType} from "../App";
 
 interface LBProps {
@@ -32,8 +31,12 @@ export const Button = styled.button`
   border: 2px solid black;
   border-radius: 1px;
 `;
-
-export const StartButton = styled(Button)`
+const StartButton = styled(Button)<{ signature: string }>`
+  
+  background-color: ${props => (props.signature===Messages.launch)? "rgba(108, 197, 81,0.9)":"rgba(247, 75, 64,0.9)"};
+  //background-color: rgba(108, 197, 81,0.8);
+`
+export const StartButtons = styled(Button)`
   background-color: rgba(108, 197, 81,0.8);
 `;
 
@@ -46,7 +49,7 @@ function LaunchButtons(Props: LBProps) {
 
     return (
         <div className="launch-buttons">
-            {(!isRest ) && <StartButton onClick={onStartClick}>{signature}</StartButton>}
+            {(!isRest ) && <StartButton onClick={onStartClick} signature={signature}>{signature}</StartButton>}
             {!start && isRest && <Button onClick={e => onRestClick("shortRestTime", e)}>{Messages.shortRest}</Button>}
             {!start && isRest && <Button onClick={e => onRestClick("longRestTime", e)}>{Messages.longRest}</Button>}
             {isRest && <Button onClick={Props.onSkipClick}>{Messages.skip}</Button>}
