@@ -19,7 +19,7 @@ type timeConstNameType = "shortRestTime" | "longRestTime" | "workingSessionTime"
 
 export type {taskType, timeConstantsType, timeConstNameType}
 
-const Sets = styled(Button)`
+export const Sets = styled(Button)`
       border: 1px;
       border-radius: 5px;
       background-color: gainsboro;
