@@ -25,11 +25,14 @@ export const Button = styled.button`
   background-color: snow;
   font-family: 'Open Sans', sans-serif;
   font-weight: bold;
-  font-size: 1em;
+  font-size: 20px;
   margin: 1em;
+  width: 300px;
+  height: 75px;
   padding: 0.25em 1em;
   border: 2px solid black;
   border-radius: 1px;
+  cursor: pointer;
 `;
 const StartButton = styled(Button)<{ signature: string }>`
   

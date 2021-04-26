@@ -20,6 +20,7 @@ const Select = styled.select`
   padding: 2px 3px 5px;
   margin-bottom: 10px;
   width: 100%;
+  font-size: 17px;
   text-align: center;
 `;
 

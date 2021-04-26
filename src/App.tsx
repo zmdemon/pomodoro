@@ -292,6 +292,16 @@ function App() {
         <div className="App">
             <Time isRest={isRest} time={time} start={start} onDefTimeClick={handleDefTimeClick}/>
 
+            <LaunchButtons
+                onSkipClick={handleSkipClick}
+                onLongRestClick={handleLongRestClick}
+                onRestClick={handleRestClick}
+                onStartClick={handleStartClick}
+                isRest={isRest}
+                start={start}
+                signature={launchMessage}
+            />
+
             <TaskForm
                 onTaskSubmit={handleTaskFormSubmit}
                 taskFormVisible={taskFormVisible}
@@ -308,15 +318,7 @@ function App() {
             />
 
 
-            <LaunchButtons
-                onSkipClick={handleSkipClick}
-                onLongRestClick={handleLongRestClick}
-                onRestClick={handleRestClick}
-                onStartClick={handleStartClick}
-                isRest={isRest}
-                start={start}
-                signature={launchMessage}
-            />
+
             <ControlsDiv>
                 <Sets onClick={handleStatsClose}>Статистика</Sets>
                 <Sets onClick={handleTabClose}>Настройки</Sets>
