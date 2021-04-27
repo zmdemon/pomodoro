@@ -27,15 +27,16 @@ export const Button = styled.button`
   font-weight: bold;
   font-size: 20px;
   margin: 1em;
-  width: 300px;
-  height: 75px;
+  //width: 300px;
+  //height: 75px;
   padding: 0.25em 1em;
   border: 2px solid black;
   border-radius: 1px;
   cursor: pointer;
 `;
 const StartButton = styled(Button)<{ signature: string }>`
-  
+  width: 300px;
+  height: 75px;
   background-color: ${props => (props.signature===Messages.launch)? "rgba(108, 197, 81,0.9)":"rgba(247, 75, 64,0.9)"};
   //background-color: rgba(108, 197, 81,0.8);
 `

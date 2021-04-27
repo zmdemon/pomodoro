@@ -1,6 +1,8 @@
 import React from "react";
 import {taskType} from "../App";
 import Task from "./Task";
+import styled from "styled-components";
+import {Button} from "./LaunchButtons";
 
 interface TaskListProps {
     tasks: taskType[]
@@ -8,6 +10,21 @@ interface TaskListProps {
     onTaskDoneChange: (arg0: string, arg1: React.ChangeEvent<HTMLInputElement>) => void
 }
 
+export const Delete = styled(Button)`
+  border: 1px;
+  border-radius: 5px;
+  background-color: firebrick;
+  cursor: pointer;
+  color: navajowhite;
+  font-size: 12px;
+  margin-left: 30px;
+  opacity: 0.5;
+  
+  &:hover {
+    color: black;
+    opacity: 1;
+  }
+`;
 
 export default function TasksList(Props: TaskListProps) {
     const detailedTaskList = Props.tasks.map((task) => {
@@ -16,12 +33,12 @@ export default function TasksList(Props: TaskListProps) {
                 onChange={(e) => Props.onTaskDoneChange(task.id, e)}
                 checked={task.isDone}
             />
-            const deleteButton = <button
+            const deleteButton = <Delete
                 className="btn-delete"
                 onClick={(e) => Props.onTaskDeleteClick(task.id, e)}
             >
                 Удалить
-            </button>
+            </Delete>
 
             return (
                 <li key={task.id}>

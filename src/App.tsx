@@ -25,6 +25,7 @@ export const Sets = styled(Button)`
       background-color: gainsboro;
       cursor: pointer;
       color: #282c34;
+  font-size: 17px;
 
       &:hover {
         color: black;
@@ -292,15 +293,7 @@ function App() {
         <div className="App">
             <Time isRest={isRest} time={time} start={start} onDefTimeClick={handleDefTimeClick}/>
 
-            <LaunchButtons
-                onSkipClick={handleSkipClick}
-                onLongRestClick={handleLongRestClick}
-                onRestClick={handleRestClick}
-                onStartClick={handleStartClick}
-                isRest={isRest}
-                start={start}
-                signature={launchMessage}
-            />
+
 
             <TaskForm
                 onTaskSubmit={handleTaskFormSubmit}
@@ -315,6 +308,15 @@ function App() {
                                                    currentTaskId={currentTaskId}/>}
                 currentTaskName={currentTask?.taskName}
                 currentTask={currentTask}
+            />
+            <LaunchButtons
+                onSkipClick={handleSkipClick}
+                onLongRestClick={handleLongRestClick}
+                onRestClick={handleRestClick}
+                onStartClick={handleStartClick}
+                isRest={isRest}
+                start={start}
+                signature={launchMessage}
             />
 
 
