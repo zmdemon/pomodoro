@@ -26,6 +26,7 @@ export const Delete = styled(Button)`
   }
 `;
 
+
 export default function TasksList(Props: TaskListProps) {
     const detailedTaskList = Props.tasks.map((task) => {
             const checkbox = <input

@@ -3,8 +3,9 @@ import styled from "styled-components";
 
 interface WrapperProps {
     title: string
-    children?: JSX.Element
+    children: JSX.Element[]
     onCrossClick: React.MouseEventHandler<HTMLButtonElement> | undefined
+    className:string
 
 }
 
@@ -25,19 +26,18 @@ const MenuWrapperDiv = styled.div`
       box-sizing: border-box;
       width: 350px;
       height: 300px;
-      //padding: 0 15px 15px;
+      padding: 0 15px 15px;
       border: 3px solid black;
       border-radius: 10px;
       background: whitesmoke;
       overflow-y: hidden;
 
       h4 {
-        margin: 15px;
+        margin: 15px 0;
+        font-weight: bold;
       }
 
-      div {
-        margin: 0 15px;
-      }
+      
 
       section {
         display: flex;
@@ -58,31 +58,44 @@ const TopBlock = styled.div`
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 15px 0;
+      margin: 15px 0;
 
       h3 {
         margin: 0;
+        
       }
     `;
 
 const Divider = styled.hr`
-      margin: 0 15px;
       border: none;
       background-color: rgba(96, 102, 110, .5);
-      height: 1px;
+      height: 0.5px;
     `;
+
+const Setting = styled.div`
+      margin-bottom: 15px;
+    `;
+
 
 function MenuWrapper(Props: WrapperProps) {
 
+    const settings = Props.children.map(set=>{
+        return <>
+            <Divider/>
+            <Setting>{set}</Setting>
+        </>
+    })
+
     return (
-        <Wrapper>
+        <Wrapper className={Props.className}>
             <MenuWrapperDiv>
                 <TopBlock>
                     <Title>{Props.title}</Title>
                     <Cross onClick={Props.onCrossClick}>x</Cross>
                 </TopBlock>
-                <Divider/>
-                {Props.children}
+
+                {settings}
+
             </MenuWrapperDiv>
 
         </Wrapper>

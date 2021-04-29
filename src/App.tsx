@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import clsx from 'clsx';
 import useSound from 'use-sound';
-
+// @ts-ignore
+import {disableBodyScroll, enableBodyScroll, clearAllBodyScrollLocks} from 'body-scroll-lock';
 import './App.css';
 import Technical from "./components/Technical";
 import LaunchButtons, {Button} from "./components/LaunchButtons";
@@ -12,7 +13,7 @@ import TaskForm from "./components/TaskForm";
 import uuid from "react-uuid";
 import TasksDropSelect from "./components/TasksDropSelect";
 import TimeSettings from "./components/TimeSettings";
-import TasksList from "./components/TasksList";
+import TasksList, {Delete} from "./components/TasksList";
 import MenuWrapper from "./components/MenuWrapper";
 import styled from "styled-components";
 
@@ -32,6 +33,18 @@ export const Sets = styled(Button)`
 
   &:hover {
     color: black;
+  }
+`;
+const Boost = styled(Delete)`
+  background-color: darkslateblue;
+  cursor: pointer;
+  color: white;
+  font-size: 13px;
+  margin: 0;
+  opacity: 0.8;
+
+  &:hover {
+    color: antiquewhite;
   }
 `;
 const ControlsDiv = styled.div`
@@ -82,7 +95,7 @@ function App() {
             setLaunchMessage(isRest ? messages[2] : messages[0])
             id.current = window.setInterval(() => {
                 setTime((time) => time - 1);
-            }, 10);
+            }, timeSpeed);
         }
 
         return () => clear();
@@ -93,12 +106,12 @@ function App() {
             setStart(_ => false)
             setTime(_ => timeConstants.shortRestTime)
             setIsRest(e => !e)
-            setLaunchMessage(messages[3])
+            setLaunchMessage(messages[1])
             addInterval(currentTaskId)
 
             clear();
         }
-    } , [time]);
+    }, [time]);
 
     React.useEffect(() => {
         document.title = isRest ? `Чилим!)` : `Воркаем! ${finalTime}`;
@@ -210,7 +223,7 @@ function App() {
     }
 
     function handleTimeSpeedChangeChange() {
-        (timeSpeed < 1000) ? setTimeSpeed(e => e * 10) : setTimeSpeed(10)
+        (timeSpeed <= 10) ? setTimeSpeed(1000) : setTimeSpeed(e => e / 10)
     }
 
     function handleTaskFormSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -244,8 +257,11 @@ function App() {
         }
     }
 
+    const targetElement = document.querySelector('.App');
+
     function handleTabClose() {
-        setTabVisible(a => !a)
+        setTabVisible(a => !a);
+        (tabVisible)? enableBodyScroll(targetElement):disableBodyScroll(targetElement)
     }
 
     function handleStatsClose() {
@@ -349,11 +365,19 @@ function App() {
             {tabVisible && <MenuWrapper
                 title={"Настройки"}
                 onCrossClick={handleTabClose}
+                className={"menu-wrapper"}
                 children={
-                    <TimeSettings
-                        timeConstants={timeConstants}
-                        onTimeConstChange={handleTimeConstChange}
-                    />
+                    [
+                        <TimeSettings
+                            timeConstants={timeConstants}
+                            onTimeConstChange={handleTimeConstChange}
+                        />,
+                        <>
+                            <h4>Ускорение</h4>
+                            <Boost onClick={handleTimeSpeedChangeChange}>time boost: {1000 / timeSpeed}x</Boost>
+                        </>
+
+                    ]
                 }
 
             />}
