@@ -1,4 +1,7 @@
 import React, {useEffect, useState} from 'react';
+import clsx from 'clsx';
+import useSound from 'use-sound';
+
 import './App.css';
 import Technical from "./components/Technical";
 import LaunchButtons, {Button} from "./components/LaunchButtons";
@@ -20,20 +23,20 @@ type timeConstNameType = "shortRestTime" | "longRestTime" | "workingSessionTime"
 export type {taskType, timeConstantsType, timeConstNameType}
 
 export const Sets = styled(Button)`
-      border: 1px;
-      border-radius: 5px;
-      background-color: gainsboro;
-      cursor: pointer;
-      color: #282c34;
+  border: 1px;
+  border-radius: 5px;
+  background-color: gainsboro;
+  cursor: pointer;
+  color: #282c34;
   font-size: 17px;
 
-      &:hover {
-        color: black;
-      }
-    `;
+  &:hover {
+    color: black;
+  }
+`;
 const ControlsDiv = styled.div`
-      display: flex;
-    `;
+  display: flex;
+`;
 
 function App() {
     const [time, setTime] = useState<number>(1)
@@ -79,7 +82,7 @@ function App() {
             setLaunchMessage(isRest ? messages[2] : messages[0])
             id.current = window.setInterval(() => {
                 setTime((time) => time - 1);
-            }, 1000);
+            }, 10);
         }
 
         return () => clear();
@@ -92,9 +95,10 @@ function App() {
             setIsRest(e => !e)
             setLaunchMessage(messages[3])
             addInterval(currentTaskId)
+
             clear();
         }
-    }, [time]);
+    } , [time]);
 
     React.useEffect(() => {
         document.title = isRest ? `Чилим!)` : `Воркаем! ${finalTime}`;
@@ -149,7 +153,6 @@ function App() {
     }, [tasks]);
 
 
-
     useEffect(() => {
         if (isRest) {
             setTime(_ => timeConstants.shortRestTime)
@@ -199,6 +202,7 @@ function App() {
 
     function handleDefTimeClick(plus: boolean) {
         plus ? setTime(time - (-60)) : setTime(time - 60)
+
     }
 
     function handleTimeConstChange(timeConstType: timeConstNameType, e: React.ChangeEvent<HTMLSelectElement>) {
@@ -287,13 +291,9 @@ function App() {
     let currentTask = tasks.filter(task => task.id === currentTaskId)[0]
 
 
-
-
     return (
-        <div className="App">
+        <div className={clsx("App", start && "running")}>
             <Time isRest={isRest} time={time} start={start} onDefTimeClick={handleDefTimeClick}/>
-
-
 
             <TaskForm
                 onTaskSubmit={handleTaskFormSubmit}
@@ -318,7 +318,6 @@ function App() {
                 start={start}
                 signature={launchMessage}
             />
-
 
 
             <ControlsDiv>
@@ -354,7 +353,9 @@ function App() {
                     <TimeSettings
                         timeConstants={timeConstants}
                         onTimeConstChange={handleTimeConstChange}
-                    />}
+                    />
+                }
+
             />}
 
 

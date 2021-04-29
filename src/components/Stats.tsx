@@ -13,7 +13,7 @@ const StatsDiv = styled.div`
   padding: 0;
   margin: 30px 0;
   width: 300px;
-  background-color: snow;
+  background-color:rgba(255, 255, 255, 0.7);
   
 
   h3 {

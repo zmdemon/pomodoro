@@ -16,11 +16,23 @@ ul, li {
     /*background: black;*/
     /*color:white;*/
     /*overflow: hidden;*/
-    background: url("img/wave.png") repeat-x  bottom left -400px;
+    background: url("img/wave.png") repeat-x bottom left -100% fixed;
     background-size: 70%;
     min-height: 100vh;
+    /*animation: animatedBackground 5000s linear forwards;*/
+}
+.App.running {
 
+    animation: animatedBackground 4000s linear forwards;
+}
 
+@keyframes animatedBackground {
+    from {
+        background-position: bottom left -100%;
+    }
+    to {
+        background-position: bottom left 5000px;
+    }
 }
 h1 {
     font-weight: 100;
@@ -28,6 +40,35 @@ h1 {
     margin:0 ;
 }
 
+@media screen and (max-width: 900px) {
+
+    .App {
+        background: url("img/wave.png") no-repeat bottom left -150px fixed;
+        background-size: 70vh;
+    }
+    .App.running {
+        animation: none;
+    }
+
+    .App h1 {
+        font-size: 100px;
+    }
+}
+
+@media (min-aspect-ratio: 1/1) {
+    .App {
+        background-repeat: repeat-x ;
+        background-size: 70%;
+    }
+
+}
+
+@media (min-aspect-ratio: 1/1) and (max-width: 900px) {
+    .App {
+        background-repeat: repeat-x ;
+        background-size: 50%;
+    }
+}
 
 
 
