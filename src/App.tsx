@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import clsx from 'clsx';
-import useSound from 'use-sound';
 // @ts-ignore
-import {disableBodyScroll, enableBodyScroll, clearAllBodyScrollLocks} from 'body-scroll-lock';
+import {disableBodyScroll, clearAllBodyScrollLocks} from 'body-scroll-lock';
 import './App.css';
 import Technical from "./components/Technical";
 import LaunchButtons, {Button} from "./components/LaunchButtons";
@@ -127,6 +126,15 @@ function App() {
             }
         }
     }, [start]);
+
+    React.useEffect(() => {
+        if (tabVisible){
+            const menuWrapper = document.querySelector('.menu-wrapper');
+            disableBodyScroll(menuWrapper)
+        } else {
+            clearAllBodyScrollLocks();
+        }
+    }, [tabVisible]);
 
 
     // useEffect(() => {
@@ -257,11 +265,9 @@ function App() {
         }
     }
 
-    const targetElement = document.querySelector('.App');
 
     function handleTabClose() {
         setTabVisible(a => !a);
-        (tabVisible)? enableBodyScroll(targetElement):disableBodyScroll(targetElement)
     }
 
     function handleStatsClose() {
