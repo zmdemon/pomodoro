@@ -1,7 +1,7 @@
 import React from "react";
 import {Button} from "./LaunchButtons";
 import styled from "styled-components";
-import {Sets, taskType} from "../App";
+import { taskType} from "../App";
 
 interface TaskFormProps {
     onTaskSubmit: (event: React.FormEvent<HTMLFormElement>) => void
@@ -80,6 +80,7 @@ const Div = styled.div`
   width: 350px;
   margin: 50px auto;
   padding: 15px;
+  background-color: rgba(255,255,255,0.9);
 
 `;
 
