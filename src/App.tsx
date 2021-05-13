@@ -15,6 +15,8 @@ import TimeSettings from "./components/TimeSettings";
 import TasksList, {Delete} from "./components/TasksList";
 import MenuWrapper from "./components/MenuWrapper";
 import styled from "styled-components";
+import SoundClick from "./components/SoundClick";
+const Sound = require('react-sound').default;
 
 type taskType = { "taskName": string, "id": string, "quantity": number, "total_duration": number, "estimated": number, "isDone": boolean }
 type timeConstantsType = { "shortRestTime": number, "longRestTime": number, "workingSessionTime": number }
@@ -74,6 +76,8 @@ function App() {
     const [taskFormVisible, setTaskFormVisible] = useState(false)
     const [tabVisible, setTabVisible] = useState(false)
     const [statsVisible, setStatsVisible] = useState(false)
+    const [isPlaying, setIsPlaying] = useState(false)
+
 
 
     const messages: Array<string> = [
@@ -84,17 +88,17 @@ function App() {
         "Начать длинный перерыв"
     ]
 
-    React.useEffect(() => {
-        // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
-        let vh = window.innerHeight * 0.01;
-        // Then we set the value in the --vh custom property to the root of the document
-        document.documentElement.style.setProperty('--vh', `${vh}px`);
-        window.addEventListener('resize', () => {
-            // We execute the same script as before
-            let vh = window.innerHeight * 0.01;
-            document.documentElement.style.setProperty('--vh', `${vh}px`);
-        });
-    }, []);
+    // React.useEffect(() => {
+    //     // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
+    //     let vh = window.innerHeight * 0.01;
+    //     // Then we set the value in the --vh custom property to the root of the document
+    //     document.documentElement.style.setProperty('--vh', `${vh}px`);
+    //     window.addEventListener('resize', () => {
+    //         // We execute the same script as before
+    //         let vh = window.innerHeight * 0.01;
+    //         document.documentElement.style.setProperty('--vh', `${vh}px`);
+    //     });
+    // }, []);
 
     const id = React.useRef(0);
     const clear = () => {
@@ -102,6 +106,7 @@ function App() {
     };
     React.useEffect(() => {
         if (start && time > 0) {
+            setIsPlaying(false)
             setLaunchMessage(isRest ? messages[2] : messages[0])
             id.current = window.setInterval(() => {
                 setTime((time) => time - 1);
@@ -118,6 +123,7 @@ function App() {
             setIsRest(e => !e)
             setLaunchMessage(messages[1])
             addInterval(currentTaskId)
+            setIsPlaying(true)
 
             clear();
         }
@@ -285,6 +291,12 @@ function App() {
         setStatsVisible(a => !a)
     }
 
+    function handleSetIsPlaying() {
+        setIsPlaying(a => !a)
+    }
+
+
+
 
     // function handleTaskDivClick(id: string) {
     //     setCurrentTaskId(id)
@@ -351,6 +363,7 @@ function App() {
                 start={start}
                 signature={launchMessage}
             />
+            <SoundClick isPlaying={isPlaying} onSetIsPlaying={handleSetIsPlaying}/>
 
 
             <ControlsDiv>
