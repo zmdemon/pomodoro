@@ -14,6 +14,13 @@ const PlusButton = styled(Button)`
   font-size: larger;
 `;
 
+const FinalTime = styled.h1`
+  font-family: 'Roboto Mono', monospace;
+  font-size: 120px;
+  margin: 30px 0;
+  cursor: default;
+`;
+
 function Time(Props: LBProps) {
     const start = Props.start
     const isRest = Props.isRest
@@ -28,7 +35,7 @@ function Time(Props: LBProps) {
 
     return (
         <>
-            <h1>{finalTime}</h1>
+            <FinalTime>{finalTime}</FinalTime>
             <div className="edit-time-div">
                 {(!isRest&&!start)&&<div>
                     <PlusButton onClick={(e) => onDefTimeClick(true, e)}

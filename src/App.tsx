@@ -1,4 +1,7 @@
 import React, {useEffect, useState} from 'react';
+import clsx from 'clsx';
+// @ts-ignore
+import {disableBodyScroll, clearAllBodyScrollLocks} from 'body-scroll-lock';
 import './App.css';
 import Technical from "./components/Technical";
 import LaunchButtons, {Button} from "./components/LaunchButtons";
@@ -9,9 +12,11 @@ import TaskForm from "./components/TaskForm";
 import uuid from "react-uuid";
 import TasksDropSelect from "./components/TasksDropSelect";
 import TimeSettings from "./components/TimeSettings";
-import TasksList from "./components/TasksList";
+import TasksList, {Delete} from "./components/TasksList";
 import MenuWrapper from "./components/MenuWrapper";
 import styled from "styled-components";
+import SoundClick from "./components/SoundClick";
+const Sound = require('react-sound').default;
 
 type taskType = { "taskName": string, "id": string, "quantity": number, "total_duration": number, "estimated": number, "isDone": boolean }
 type timeConstantsType = { "shortRestTime": number, "longRestTime": number, "workingSessionTime": number }
@@ -19,20 +24,33 @@ type timeConstNameType = "shortRestTime" | "longRestTime" | "workingSessionTime"
 
 export type {taskType, timeConstantsType, timeConstNameType}
 
-const Sets = styled(Button)`
-      border: 1px;
-      border-radius: 5px;
-      background-color: gainsboro;
-      cursor: pointer;
-      color: #282c34;
+export const Sets = styled(Button)`
+  border: 1px;
+  border-radius: 5px;
+  background-color: gainsboro;
+  cursor: pointer;
+  color: #282c34;
+  font-size: 17px;
 
-      &:hover {
-        color: black;
-      }
-    `;
+  &:hover {
+    color: black;
+  }
+`;
+const Boost = styled(Delete)`
+  background-color: darkslateblue;
+  cursor: pointer;
+  color: white;
+  font-size: 13px;
+  margin: 0;
+  opacity: 0.8;
+
+  &:hover {
+    color: antiquewhite;
+  }
+`;
 const ControlsDiv = styled.div`
-      display: flex;
-    `;
+  display: flex;
+`;
 
 function App() {
     const [time, setTime] = useState<number>(1)
@@ -58,6 +76,8 @@ function App() {
     const [taskFormVisible, setTaskFormVisible] = useState(false)
     const [tabVisible, setTabVisible] = useState(false)
     const [statsVisible, setStatsVisible] = useState(false)
+    const [isPlaying, setIsPlaying] = useState(false)
+
 
 
     const messages: Array<string> = [
@@ -68,6 +88,17 @@ function App() {
         "Начать длинный перерыв"
     ]
 
+    // React.useEffect(() => {
+    //     // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
+    //     let vh = window.innerHeight * 0.01;
+    //     // Then we set the value in the --vh custom property to the root of the document
+    //     document.documentElement.style.setProperty('--vh', `${vh}px`);
+    //     window.addEventListener('resize', () => {
+    //         // We execute the same script as before
+    //         let vh = window.innerHeight * 0.01;
+    //         document.documentElement.style.setProperty('--vh', `${vh}px`);
+    //     });
+    // }, []);
 
     const id = React.useRef(0);
     const clear = () => {
@@ -75,10 +106,11 @@ function App() {
     };
     React.useEffect(() => {
         if (start && time > 0) {
+            setIsPlaying(false)
             setLaunchMessage(isRest ? messages[2] : messages[0])
             id.current = window.setInterval(() => {
                 setTime((time) => time - 1);
-            }, 1000);
+            }, timeSpeed);
         }
 
         return () => clear();
@@ -89,8 +121,10 @@ function App() {
             setStart(_ => false)
             setTime(_ => timeConstants.shortRestTime)
             setIsRest(e => !e)
-            setLaunchMessage(messages[3])
+            setLaunchMessage(messages[1])
             addInterval(currentTaskId)
+            setIsPlaying(true)
+
             clear();
         }
     }, [time]);
@@ -108,7 +142,16 @@ function App() {
                 setLaunchMessage(messages[1])
             }
         }
-    }, [start]);
+    }, [[], start]);
+
+    React.useEffect(() => {
+        if (tabVisible) {
+            const menuWrapper = document.querySelector('.menu-wrapper');
+            disableBodyScroll(menuWrapper)
+        } else {
+            clearAllBodyScrollLocks();
+        }
+    }, [tabVisible]);
 
 
     // useEffect(() => {
@@ -146,7 +189,6 @@ function App() {
     useEffect(() => {
         localStorage.setItem("items", JSON.stringify(tasks));
     }, [tasks]);
-
 
 
     useEffect(() => {
@@ -198,6 +240,7 @@ function App() {
 
     function handleDefTimeClick(plus: boolean) {
         plus ? setTime(time - (-60)) : setTime(time - 60)
+
     }
 
     function handleTimeConstChange(timeConstType: timeConstNameType, e: React.ChangeEvent<HTMLSelectElement>) {
@@ -205,7 +248,7 @@ function App() {
     }
 
     function handleTimeSpeedChangeChange() {
-        (timeSpeed < 1000) ? setTimeSpeed(e => e * 10) : setTimeSpeed(10)
+        (timeSpeed <= 10) ? setTimeSpeed(1000) : setTimeSpeed(e => e / 10)
     }
 
     function handleTaskFormSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -239,13 +282,20 @@ function App() {
         }
     }
 
+
     function handleTabClose() {
-        setTabVisible(a => !a)
+        setTabVisible(a => !a);
     }
 
     function handleStatsClose() {
         setStatsVisible(a => !a)
     }
+
+    function handleSetIsPlaying() {
+        setIsPlaying(a => !a)
+    }
+
+
 
 
     // function handleTaskDivClick(id: string) {
@@ -286,10 +336,8 @@ function App() {
     let currentTask = tasks.filter(task => task.id === currentTaskId)[0]
 
 
-
-
     return (
-        <div className="App">
+        <div className={clsx("App", start && "running")}>
             <Time isRest={isRest} time={time} start={start} onDefTimeClick={handleDefTimeClick}/>
 
             <TaskForm
@@ -306,8 +354,6 @@ function App() {
                 currentTaskName={currentTask?.taskName}
                 currentTask={currentTask}
             />
-
-
             <LaunchButtons
                 onSkipClick={handleSkipClick}
                 onLongRestClick={handleLongRestClick}
@@ -317,6 +363,9 @@ function App() {
                 start={start}
                 signature={launchMessage}
             />
+            <SoundClick isPlaying={isPlaying} onSetIsPlaying={handleSetIsPlaying}/>
+
+
             <ControlsDiv>
                 <Sets onClick={handleStatsClose}>Статистика</Sets>
                 <Sets onClick={handleTabClose}>Настройки</Sets>
@@ -346,11 +395,21 @@ function App() {
             {tabVisible && <MenuWrapper
                 title={"Настройки"}
                 onCrossClick={handleTabClose}
+                className={"menu-wrapper"}
                 children={
-                    <TimeSettings
-                        timeConstants={timeConstants}
-                        onTimeConstChange={handleTimeConstChange}
-                    />}
+                    [
+                        <TimeSettings
+                            timeConstants={timeConstants}
+                            onTimeConstChange={handleTimeConstChange}
+                        />,
+                        <>
+                            <h4>Ускорение</h4>
+                            <Boost onClick={handleTimeSpeedChangeChange}>time boost: {1000 / timeSpeed}x</Boost>
+                        </>
+
+                    ]
+                }
+
             />}
 
 

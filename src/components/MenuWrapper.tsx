@@ -3,15 +3,16 @@ import styled from "styled-components";
 
 interface WrapperProps {
     title: string
-    children?: JSX.Element
+    children: JSX.Element[]
     onCrossClick: React.MouseEventHandler<HTMLButtonElement> | undefined
+    className: string
 
 }
 
 const Wrapper = styled.div`
   width: 100%;
   height: 100vh;
-  position: absolute;
+  position: fixed;
   backdrop-filter: blur(2px);
   display: flex;
   justify-content: center;
@@ -22,67 +23,78 @@ const Wrapper = styled.div`
 `;
 
 const MenuWrapperDiv = styled.div`
-      box-sizing: border-box;
-      width: 350px;
-      height: 300px;
-      //padding: 0 15px 15px;
-      border: 3px solid black;
-      border-radius: 10px;
-      background: whitesmoke;
-      overflow-y: hidden;
+  box-sizing: border-box;
+  width: 350px;
+  height: 300px;
+  padding: 0 15px 15px;
+  border: 3px solid black;
+  border-radius: 10px;
+  background: whitesmoke;
+  overflow-y: hidden;
 
-      h4 {
-        margin: 15px;
-      }
+  h4 {
+    margin: 15px 0;
+    font-weight: bold;
+  }
 
-      div {
-        margin: 0 15px;
-      }
 
-      section {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 5px;
-      }
-    `;
+  section {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+  }
+`;
 const Cross = styled.button`
-      height: 50%;
-      margin: 0;
-      background: white;
-    `;
+  height: 50%;
+  margin: 0;
+  background: white;
+`;
 const Title = styled.h3`
 
-    `;
+`;
 
 const TopBlock = styled.div`
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 15px 0;
 
-      h3 {
-        margin: 0;
-      }
-    `;
+  h3 {
+    margin: 0;
+
+  }
+`;
 
 const Divider = styled.hr`
-      margin: 0 15px;
-      border: none;
-      background-color: rgba(96, 102, 110, .5);
-      height: 1px;
-    `;
+  border: none;
+  background-color: rgba(96, 102, 110, .5);
+  height: 0.5px;
+`;
+
+const Setting = styled.div`
+  margin-bottom: 15px;
+`;
+
 
 function MenuWrapper(Props: WrapperProps) {
 
+    const settings = Props.children.map(set => {
+        return <>
+            <Divider/>
+            <Setting>{set}</Setting>
+        </>
+    })
+
     return (
-        <Wrapper>
+        <Wrapper className={Props.className}>
             <MenuWrapperDiv>
                 <TopBlock>
                     <Title>{Props.title}</Title>
                     <Cross onClick={Props.onCrossClick}>x</Cross>
                 </TopBlock>
-                <Divider/>
-                {Props.children}
+
+                {settings}
+
             </MenuWrapperDiv>
 
         </Wrapper>

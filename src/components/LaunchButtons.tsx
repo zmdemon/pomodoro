@@ -25,20 +25,31 @@ export const Button = styled.button`
   background-color: snow;
   font-family: 'Open Sans', sans-serif;
   font-weight: bold;
-  font-size: 1em;
+  font-size: 20px;
   margin: 1em;
+  //width: 300px;
+  //height: 75px;
   padding: 0.25em 1em;
   border: 2px solid black;
   border-radius: 1px;
+  cursor: pointer;
 `;
 const StartButton = styled(Button)<{ signature: string }>`
-  
+  width: 300px;
+  height: 75px;
   background-color: ${props => (props.signature===Messages.launch)? "rgba(108, 197, 81,0.9)":"rgba(247, 75, 64,0.9)"};
   //background-color: rgba(108, 197, 81,0.8);
 `
-export const StartButtons = styled(Button)`
-  background-color: rgba(108, 197, 81,0.8);
+export const ShortRestButton = styled(Button)`
+  border-color: #185B01;
+  border-width: 4px;
+  border-radius: 10px;
 `;
+ const LaunchButtonsDiv = styled.div`
+  display: flex;
+   flex-direction: column;
+`;
+
 
 function LaunchButtons(Props: LBProps) {
     const isRest = Props.isRest
@@ -48,12 +59,12 @@ function LaunchButtons(Props: LBProps) {
     const onRestClick = Props.onRestClick
 
     return (
-        <div className="launch-buttons">
+        <LaunchButtonsDiv className="launch-buttons">
             {(!isRest ) && <StartButton onClick={onStartClick} signature={signature}>{signature}</StartButton>}
-            {!start && isRest && <Button onClick={e => onRestClick("shortRestTime", e)}>{Messages.shortRest}</Button>}
+            {!start && isRest && <ShortRestButton onClick={e => onRestClick("shortRestTime", e)}>{Messages.shortRest}</ShortRestButton>}
             {!start && isRest && <Button onClick={e => onRestClick("longRestTime", e)}>{Messages.longRest}</Button>}
             {isRest && <Button onClick={Props.onSkipClick}>{Messages.skip}</Button>}
-        </div>
+        </LaunchButtonsDiv>
     )
 }
 

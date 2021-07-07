@@ -23,8 +23,23 @@ const TaskDiv = styled.div`
     background-color: rgba(92, 92, 92, 0.05); // <Thing> when hovered
   }
 `;
+
+const Title4 = styled.h4`
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  font-size: 17px;
+  font-weight: normal;
+`;
+
+const LiStat = styled.li`
+  margin: 0 35px 5px;
+  font-size: 14px;
+
+`;
 const TaskName = styled.span<{ isDone: boolean }>`
   text-decoration: ${props => (props.isDone) ? 'line-through' : 'none'};
+  margin-left: 7px;
 `;
 
 function Task(Props: TaskProps) {
@@ -38,10 +53,10 @@ function Task(Props: TaskProps) {
     return (
         <TaskDiv>
 
-            <h4>{Props.checkBox} <TaskName isDone={task.isDone}>{task.taskName}</TaskName></h4>
+            <Title4>{Props.checkBox} <TaskName isDone={task.isDone}>{task.taskName}</TaskName></Title4>
             <ul>
-                <li>кол-во: {task.quantity} из {task.estimated}</li>
-                <li>время: {task.total_duration / 60} мин.</li>
+                <LiStat>кол-во: {task.quantity} из {task.estimated}</LiStat>
+                <LiStat>время: {task.total_duration / 60} мин.</LiStat>
             </ul>
             {Props.children}
         </TaskDiv>

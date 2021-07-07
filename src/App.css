@@ -1,3 +1,4 @@
+@import "reset.css";
 ul, li {
     list-style-type: none;
     padding: 0;
@@ -15,8 +16,23 @@ ul, li {
     /*background: black;*/
     /*color:white;*/
     /*overflow: hidden;*/
+    background: url("img/wave.png") repeat-x bottom left -100% fixed;
+    background-size: 70%;
+    min-height: 100vh;
+    /*animation: animatedBackground 5000s linear forwards;*/
+}
+.App.running {
 
+    animation: animatedBackground 4000s linear forwards;
+}
 
+@keyframes animatedBackground {
+    from {
+        background-position: bottom left -100%;
+    }
+    to {
+        background-position: bottom left 5000px;
+    }
 }
 h1 {
     font-weight: 100;
@@ -24,38 +40,55 @@ h1 {
     margin:0 ;
 }
 
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+
+@media screen and (max-width: 900px) {
+
+    .App {
+        background: url("img/wave.png") no-repeat bottom left -150px fixed;
+        background-size: 70vh;
+    }
+    .App.running {
+        animation: none;
+    }
+
+    .App h1 {
+        font-size: 100px;
+    }
 }
 
-.technical-div {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border: #282c34 solid 3px;
-    width: max-content;
-    padding: 20px;
+@media (min-aspect-ratio: 1/1) {
+    .App {
+        background-repeat: repeat-x ;
+        background-size: 70%;
+    }
 
 }
 
-.launch-buttons {
-    margin: 20px 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+@media (min-aspect-ratio: 1/1) and (max-width: 900px) {
+    .App {
+        background-repeat: repeat-x ;
+        background-size: 50%;
+    }
+}
+@media screen and (max-width: 425px) {
+
+    .App {
+         /* Fallback for browsers that do not support Custom Properties */
+        /*min-height: calc(var(--vh, 1vh) * 100);*/
+        min-height: 100vh;
+        background-position: bottom left -200px;
+        background-size: 450px;
+    }
+
 }
 
-.App-header {
-    background-color: #282c34;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
-}
+
+
+
+
+
+
+
 
 
 
