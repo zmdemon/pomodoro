@@ -1,6 +1,4 @@
-import React, {useState} from "react";
-import type {taskType} from '../App'
-import styled from "styled-components";
+import React from "react";
 // @ts-ignore
 import Click from '../sounds/click61.mp3'
 

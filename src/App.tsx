@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import clsx from 'clsx';
 // @ts-ignore
-import {disableBodyScroll, clearAllBodyScrollLocks} from 'body-scroll-lock';
+import {clearAllBodyScrollLocks, disableBodyScroll} from 'body-scroll-lock';
 import './App.css';
 import Technical from "./components/Technical";
 import LaunchButtons, {Button} from "./components/LaunchButtons";
@@ -16,7 +16,7 @@ import TasksList, {Delete} from "./components/TasksList";
 import MenuWrapper from "./components/MenuWrapper";
 import styled from "styled-components";
 import SoundClick from "./components/SoundClick";
-const Sound = require('react-sound').default;
+
 
 type taskType = { "taskName": string, "id": string, "quantity": number, "total_duration": number, "estimated": number, "isDone": boolean }
 type timeConstantsType = { "shortRestTime": number, "longRestTime": number, "workingSessionTime": number }
@@ -278,7 +278,7 @@ function App() {
     function handleTaskFormClose() {
         setTaskFormVisible(a => !a)
         if (currentTaskId === "") {
-            setCurrentTaskId(tasks[0].id)
+            setCurrentTaskId(tasks[0]?.id)
         }
     }
 
